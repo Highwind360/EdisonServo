@@ -1,23 +1,30 @@
-var Cylon = require('cylon');
-/*
-var net = require('net');
-var io = require('socket.io').listen(1337);
-*/
+"use strict";
 
-Cylon
-  .robot()
-  .connection('edison', { adaptor: 'intel-iot' })
-  .device('servo', { driver: 'servo', pin: 3, connection: 'edison' })
-  .on('ready', function(my) {
-    var angle = 0;
-    my.servo.angle(angle);
-    setInterval(function(){
-      angle = 180;
-      my.servo.angle(angle);
-      console.log('Servo Angle: %d', angle);
-      angle = 0;
-      my.servo.angle(angle);
-    },100);
-  });
+var Cylon = require("cylon");
 
-Cylon.start();
+Cylon.robot({
+  connections: {
+    edison: { adaptor: "intel-iot"}
+  },
+
+  devices: {
+    servo: { driver: "servo", pin: 3, }
+  },
+
+  work: function(my) {
+    var angle = 0,
+    increment = 20;
+
+    every((1).second(), function() {
+      angle += increment;
+
+      my.servo.angle(angle);
+
+      console.log("Current Angle: " + (my.servo.currentAngle()));
+
+      if ((angle === 0) || (angle === 180)) {
+        increment = -increment;
+      }
+    });
+  }
+}).start();
