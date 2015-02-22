@@ -1,25 +1,25 @@
-var Cylon = require('cylon');
-/*
-var net = require('net');
-var io = require('socket.io').listen(1337);
-*/
+"use strict";
+
+var Cylon = require("cylon");
+var servoPin = 3;
+var analogPin = 2;
 
 Cylon.robot({
+  connections: {
+    edison: { adaptor: "intel-iot"}
+  },
+
   devices: {
-    servo: {driver: 'servo', pin: 3, connection:'edison'}
+    servo: { driver: "servo", pin: servoPin },
+    sensor: { driver: "analogSensor", pin: analogPin, lowerLimit: 0, upperLimit:180}
   },
 
   work: function(my) {
-    var agnle = 45;
-    my.servo.angle(angle);
-    every((1).second(), function() {
-      angle = angle + 45;
-      if (angle > 135) {
-        angle = 45
-      }
+    var angle = 0;
+
+    every((0.30).second(), function() {
+      angle = my.sensor.analogRead();
       my.servo.angle(angle);
     });
   }
-})
-
-Cylon.start();
+}).start();
