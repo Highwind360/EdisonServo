@@ -10,25 +10,25 @@ Cylon.robot({
   },
 
   devices: {
-    servo: { driver: "servo", pin: servoPin }
+    servo: { driver: "servo", pin: servoPin },
     button: { driver: "button", pin: buttonPin }
   },
 
   work: function(my) {
     var angle = 0,
-    increment = 20,
+    increment = 2,
     upperLim = 160;
 
-    every((1).second(), function() {
+    every((0.01).second(), function() {
       angle += increment;
 
-      if ((angle % upperLim === 0)) {
-        increment -= increment;
+      if (((angle - 20) % upperLim === 0)) {
+        angle -= increment;
       }
 
       my.servo.angle(angle);
 
-      my.button.on('release', function() {
+      my.button.on('press', function() {
         increment = -increment;
         console.log('Flipping around!')
       });
